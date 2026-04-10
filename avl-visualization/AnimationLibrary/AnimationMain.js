@@ -365,25 +365,6 @@ function initCanvas()
 
 
 
-	var width=getCookie("VisualizationWidth");
-	if (width == null || width == "")
-	{
-		width = canvas.width;
-	}
-	else
-	{
-		width = parseInt(width);
-	}
-	var height=getCookie("VisualizationHeight");
-	if (height == null || height == "")
-	{
-		height = canvas.height;
-	}
-	else
-	{
-		height = parseInt(height);
-	}
-
 	var swappedControls=getCookie("VisualizationControlSwapped");
 	swapped = swappedControls == "true"
         if (swapped)
@@ -391,40 +372,43 @@ function initCanvas()
 	    reorderSibling(document.getElementById('canvas'), document.getElementById('generalAnimationControlSection'));
 	}
 
-	canvas.width = width;
-	canvas.height = height;
-	
-	
-	
-	tableEntry = document.createElement("td");
-	txtNode = document.createTextNode(" Largura:");
-	tableEntry.appendChild(txtNode);
-	controlBar.appendChild(tableEntry);
+	function fitCanvasToWindow() {
+		var header = document.getElementById('header');
+		var algoControls = document.getElementById('algoControlSection');
+		var generalControls = document.getElementById('generalAnimationControlSection');
+		var footer = document.getElementById('footer');
 
+		var usedHeight = (header ? header.offsetHeight : 0)
+		               + (algoControls ? algoControls.offsetHeight : 0)
+		               + (generalControls ? generalControls.offsetHeight : 0)
+		               + (footer ? footer.offsetHeight : 0);
 
-	widthEntry = addControlToAnimationBar("Text", canvas.width);
-	widthEntry.size = 4;
-	widthEntry.onkeydown = this.returnSubmit(widthEntry, animationManager.changeSize.bind(animationManager), 4, true);
+		var newWidth  = window.innerWidth;
+		var newHeight = window.innerHeight - usedHeight;
 
-	
-	tableEntry = document.createElement("td");
-	txtNode = document.createTextNode("       Altura:");
-	tableEntry.appendChild(txtNode);
-	controlBar.appendChild(tableEntry);
-	
-	heightEntry = addControlToAnimationBar("Text", canvas.height);
-	heightEntry.onkeydown = this.returnSubmit(heightEntry, animationManager.changeSize.bind(animationManager), 4, true);
+		if (newWidth  < 100) newWidth  = 100;
+		if (newHeight < 100) newHeight = 100;
 
-	heightEntry.size = 4;
-	sizeButton = addControlToAnimationBar("Button", "Alterar Tamanho");
-	
-	sizeButton.onclick = animationManager.changeSize.bind(animationManager) ;
-	
+		canvas.width  = newWidth;
+		canvas.height = newHeight;
 
-        swapButton = addControlToAnimationBar("Button", "Mover Controles");
-        swapButton.onclick = swapControlDiv;	
-	
-	
+		if (widthEntry)  widthEntry.value  = newWidth;
+		if (heightEntry) heightEntry.value = newHeight;
+
+		objectManager.width  = newWidth;
+		objectManager.height = newHeight;
+
+		objectManager.draw();
+		animationManager.fireEvent("CanvasSizeChanged", {width: newWidth, height: newHeight});
+	}
+
+	widthEntry  = null;
+	heightEntry = null;
+
+	fitCanvasToWindow();
+
+	window.addEventListener('resize', fitCanvasToWindow);
+
 	animationManager.addListener("AnimationStarted", this, animStarted);
 	animationManager.addListener("AnimationEnded", this, this.animEnded);
 	animationManager.addListener("AnimationWaiting", this, this.animWaiting);
@@ -527,28 +511,26 @@ function AnimationManager(objectManager)
 	
 	this.changeSize = function()
 	{
-		
+		if (!widthEntry || !heightEntry) return;
+
 		var width = parseInt(widthEntry.value);
 		var height = parseInt(heightEntry.value);
-		
+
 		if (width > 100)
 		{
 			canvas.width = width;
 			this.animatedObjects.width = width;
-			setCookie("VisualizationWidth", String(width), 30);
-			
 		}
 		if (height > 100)
 		{
 			canvas.height = height;
 			this.animatedObjects.height = height;
-			setCookie("VisualizationHeight", String(height), 30);
 		}
-		width.value = canvas.width;
+		widthEntry.value = canvas.width;
 		heightEntry.value = canvas.height;
-		
+
 		this.animatedObjects.draw();
-		this.fireEvent("CanvasSizeChanged",{width:canvas.width, height:canvas.height});		
+		this.fireEvent("CanvasSizeChanged",{width:canvas.width, height:canvas.height});
 	}
 	
 	this.startNextBlock = function()
