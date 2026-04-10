@@ -144,7 +144,7 @@ function animWaiting()
 	{
 		stepBackButton.disabled = false;
 	}
-	objectManager.statusReport.setText("Animation Paused");
+	objectManager.statusReport.setText("Animação Pausada");
 	objectManager.statusReport.setForegroundColor("#FF0000");
 }
 
@@ -154,7 +154,7 @@ function animStarted()
 	skipBackButton.disabled = false;
 	stepForwardButton.disabled = true;
 	stepBackButton.disabled = true;
-	objectManager.statusReport.setText("Animation Running");
+	objectManager.statusReport.setText("Animação em Execução");
 	objectManager.statusReport.setForegroundColor("#009900");
 }
 
@@ -166,7 +166,7 @@ function animEnded()
 	{
 		stepBackButton.disabled = false;		
 	}
-	objectManager.statusReport.setText("Animation Completed");
+	objectManager.statusReport.setText("Animação Concluída");
 	objectManager.statusReport.setForegroundColor("#000000");
 }
 
@@ -217,7 +217,7 @@ function doPlayPause()
 	paused = !paused;
 	if (paused)
 	{
-		playPauseBackButton.setAttribute("value", "play");
+		playPauseBackButton.setAttribute("value", "Reproduzir");
 		if (skipBackButton.disabled == false)
 		{
 			stepBackButton.disabled = false;		
@@ -226,7 +226,7 @@ function doPlayPause()
 	}
 	else
 	{
-		playPauseBackButton.setAttribute("value", "pause");	
+		playPauseBackButton.setAttribute("value", "Pausar");
 	}
 	animationManager.SetPaused(paused);
 }
@@ -283,15 +283,15 @@ function initCanvas()
 	objectManager = new ObjectManager();
 	animationManager = new AnimationManager(objectManager);
 	
-	skipBackButton = addControlToAnimationBar("Button", "Skip Back");
+	skipBackButton = addControlToAnimationBar("Button", "Retroceder");
 	skipBackButton.onclick = animationManager.skipBack.bind(animationManager);
-	stepBackButton = addControlToAnimationBar("Button", "Step Back");
+	stepBackButton = addControlToAnimationBar("Button", "Passo Atrás");
 	stepBackButton.onclick = animationManager.stepBack.bind(animationManager);
-	playPauseBackButton = addControlToAnimationBar("Button", "Pause");
+	playPauseBackButton = addControlToAnimationBar("Button", "Pausar");
 	playPauseBackButton.onclick = doPlayPause ;
-	stepForwardButton = addControlToAnimationBar("Button", "Step Forward");
+	stepForwardButton = addControlToAnimationBar("Button", "Próximo Passo");
 	stepForwardButton.onclick = animationManager.step.bind(animationManager) ;
-	skipForwardButton = addControlToAnimationBar("Button", "Skip Forward");
+	skipForwardButton = addControlToAnimationBar("Button", "Avançar");
 	skipForwardButton.onclick = animationManager.skipForward.bind(animationManager);
 	
 	
@@ -320,7 +320,7 @@ function initCanvas()
 	midLevel = document.createElement("tr");
 	bottomLevel = document.createElement("td");
 	bottomLevel.align = "center";
-	var txtNode = document.createTextNode("Animation Speed"); 
+	var txtNode = document.createTextNode("Velocidade da Animação");
 	midLevel.appendChild(bottomLevel);
 	bottomLevel.appendChild(txtNode);
 	newTable.appendChild(midLevel);	
@@ -397,7 +397,7 @@ function initCanvas()
 	
 	
 	tableEntry = document.createElement("td");
-	txtNode = document.createTextNode(" w:"); 
+	txtNode = document.createTextNode(" Largura:");
 	tableEntry.appendChild(txtNode);
 	controlBar.appendChild(tableEntry);
 
@@ -408,7 +408,7 @@ function initCanvas()
 
 	
 	tableEntry = document.createElement("td");
-	txtNode = document.createTextNode("       h:"); 
+	txtNode = document.createTextNode("       Altura:");
 	tableEntry.appendChild(txtNode);
 	controlBar.appendChild(tableEntry);
 	
@@ -416,12 +416,12 @@ function initCanvas()
 	heightEntry.onkeydown = this.returnSubmit(heightEntry, animationManager.changeSize.bind(animationManager), 4, true);
 
 	heightEntry.size = 4;
-	sizeButton = addControlToAnimationBar("Button", "Change Canvas Size");
+	sizeButton = addControlToAnimationBar("Button", "Alterar Tamanho");
 	
 	sizeButton.onclick = animationManager.changeSize.bind(animationManager) ;
 	
 
-        swapButton = addControlToAnimationBar("Button", "Move Controls");
+        swapButton = addControlToAnimationBar("Button", "Mover Controles");
         swapButton.onclick = swapControlDiv;	
 	
 	
