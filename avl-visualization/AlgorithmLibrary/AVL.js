@@ -1218,5 +1218,5 @@ var currentAlg;
 function init()
 {
 	var animManag = initCanvas();
-	currentAlg = new AVL(animManag, canvas.width, canvas.height);
+	currentAlg = new AVL(animManag, objectManager.width, objectManager.height);
 }

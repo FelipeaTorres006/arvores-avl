@@ -34,6 +34,7 @@ function AnimatedLabel(id, val, center, initialWidth)
 	this.addedToScene = true;
 	this.labelColor = "#000000";
 	this.textWidth = 0;
+	this.font = '10px sans-serif';
 	if (initialWidth != undefined)
 	{
 		this.textWidth = initialWidth;
@@ -64,7 +65,7 @@ AnimatedLabel.prototype.draw = function(ctx)
 
 	
 	
-	ctx.font = '10px sans-serif';
+	ctx.font = this.font;
 	if (this.centering)
 	{
 		ctx.textAlign = 'center';
@@ -83,6 +84,9 @@ AnimatedLabel.prototype.draw = function(ctx)
 		ctx.strokeText(this.label, this.x, this.y);		
 		//ctx.fillText(this.label, this.x, this.y);
 	}
+	ctx.shadowColor = 'rgba(0,0,0,0.18)';
+	ctx.shadowBlur = 3;
+	ctx.shadowOffsetY = 1;
 	ctx.strokeStyle = this.labelColor;
 	ctx.fillStyle = this.labelColor;
 	ctx.lineWidth = 1;
@@ -101,6 +105,8 @@ AnimatedLabel.prototype.draw = function(ctx)
 			//this.textWidth = Math.max(this.textWidth, ctx.measureText(strList[i]).width);
 		}		
 	}
+	ctx.shadowBlur = 0;
+	ctx.shadowOffsetY = 0;
 	ctx.closePath();
 }
 

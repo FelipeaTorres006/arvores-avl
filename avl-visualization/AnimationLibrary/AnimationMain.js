@@ -373,6 +373,8 @@ function initCanvas()
 	}
 
 	function fitCanvasToWindow() {
+		var dpr = window.devicePixelRatio || 1;
+
 		var header = document.getElementById('header');
 		var algoControls = document.getElementById('algoControlSection');
 		var generalControls = document.getElementById('generalAnimationControlSection');
@@ -389,8 +391,16 @@ function initCanvas()
 		if (newWidth  < 100) newWidth  = 100;
 		if (newHeight < 100) newHeight = 100;
 
-		canvas.width  = newWidth;
-		canvas.height = newHeight;
+		// Tamanho físico do canvas em pixels reais (retina / HD)
+		canvas.width  = newWidth  * dpr;
+		canvas.height = newHeight * dpr;
+
+		// Tamanho CSS permanece em pixels lógicos
+		canvas.style.width  = newWidth  + 'px';
+		canvas.style.height = newHeight + 'px';
+
+		// Escala o contexto para que todas as coordenadas continuem em pixels lógicos
+		objectManager.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
 		if (widthEntry)  widthEntry.value  = newWidth;
 		if (heightEntry) heightEntry.value = newHeight;
@@ -413,8 +423,7 @@ function initCanvas()
 	animationManager.addListener("AnimationEnded", this, this.animEnded);
 	animationManager.addListener("AnimationWaiting", this, this.animWaiting);
 	animationManager.addListener("AnimationUndoUnavailable", this, this.anumUndoUnavailable);
-	objectManager.width = canvas.width;
-	objectManager.height = canvas.height;
+	// objectManager.width/height já foram definidos em pixels lógicos por fitCanvasToWindow()
 	return animationManager;
 }
 
