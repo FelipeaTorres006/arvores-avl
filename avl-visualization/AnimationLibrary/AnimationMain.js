@@ -144,7 +144,7 @@ function animWaiting()
 	{
 		stepBackButton.disabled = false;
 	}
-	objectManager.statusReport.setText("Animation Paused");
+	objectManager.statusReport.setText("Animação Pausada");
 	objectManager.statusReport.setForegroundColor("#FF0000");
 }
 
@@ -154,7 +154,7 @@ function animStarted()
 	skipBackButton.disabled = false;
 	stepForwardButton.disabled = true;
 	stepBackButton.disabled = true;
-	objectManager.statusReport.setText("Animation Running");
+	objectManager.statusReport.setText("Animação em Execução");
 	objectManager.statusReport.setForegroundColor("#009900");
 }
 
@@ -166,7 +166,7 @@ function animEnded()
 	{
 		stepBackButton.disabled = false;		
 	}
-	objectManager.statusReport.setText("Animation Completed");
+	objectManager.statusReport.setText("Animação Concluída");
 	objectManager.statusReport.setForegroundColor("#000000");
 }
 
@@ -217,7 +217,7 @@ function doPlayPause()
 	paused = !paused;
 	if (paused)
 	{
-		playPauseBackButton.setAttribute("value", "play");
+		playPauseBackButton.setAttribute("value", "Reproduzir");
 		if (skipBackButton.disabled == false)
 		{
 			stepBackButton.disabled = false;		
@@ -226,7 +226,7 @@ function doPlayPause()
 	}
 	else
 	{
-		playPauseBackButton.setAttribute("value", "pause");	
+		playPauseBackButton.setAttribute("value", "Pausar");
 	}
 	animationManager.SetPaused(paused);
 }
@@ -283,15 +283,15 @@ function initCanvas()
 	objectManager = new ObjectManager();
 	animationManager = new AnimationManager(objectManager);
 	
-	skipBackButton = addControlToAnimationBar("Button", "Skip Back");
+	skipBackButton = addControlToAnimationBar("Button", "Retroceder");
 	skipBackButton.onclick = animationManager.skipBack.bind(animationManager);
-	stepBackButton = addControlToAnimationBar("Button", "Step Back");
+	stepBackButton = addControlToAnimationBar("Button", "Passo Atrás");
 	stepBackButton.onclick = animationManager.stepBack.bind(animationManager);
-	playPauseBackButton = addControlToAnimationBar("Button", "Pause");
+	playPauseBackButton = addControlToAnimationBar("Button", "Pausar");
 	playPauseBackButton.onclick = doPlayPause ;
-	stepForwardButton = addControlToAnimationBar("Button", "Step Forward");
+	stepForwardButton = addControlToAnimationBar("Button", "Próximo Passo");
 	stepForwardButton.onclick = animationManager.step.bind(animationManager) ;
-	skipForwardButton = addControlToAnimationBar("Button", "Skip Forward");
+	skipForwardButton = addControlToAnimationBar("Button", "Avançar");
 	skipForwardButton.onclick = animationManager.skipForward.bind(animationManager);
 	
 	
@@ -320,7 +320,7 @@ function initCanvas()
 	midLevel = document.createElement("tr");
 	bottomLevel = document.createElement("td");
 	bottomLevel.align = "center";
-	var txtNode = document.createTextNode("Animation Speed"); 
+	var txtNode = document.createTextNode("Velocidade da Animação");
 	midLevel.appendChild(bottomLevel);
 	bottomLevel.appendChild(txtNode);
 	newTable.appendChild(midLevel);	
@@ -365,25 +365,6 @@ function initCanvas()
 
 
 
-	var width=getCookie("VisualizationWidth");
-	if (width == null || width == "")
-	{
-		width = canvas.width;
-	}
-	else
-	{
-		width = parseInt(width);
-	}
-	var height=getCookie("VisualizationHeight");
-	if (height == null || height == "")
-	{
-		height = canvas.height;
-	}
-	else
-	{
-		height = parseInt(height);
-	}
-
 	var swappedControls=getCookie("VisualizationControlSwapped");
 	swapped = swappedControls == "true"
         if (swapped)
@@ -391,46 +372,58 @@ function initCanvas()
 	    reorderSibling(document.getElementById('canvas'), document.getElementById('generalAnimationControlSection'));
 	}
 
-	canvas.width = width;
-	canvas.height = height;
-	
-	
-	
-	tableEntry = document.createElement("td");
-	txtNode = document.createTextNode(" w:"); 
-	tableEntry.appendChild(txtNode);
-	controlBar.appendChild(tableEntry);
+	function fitCanvasToWindow() {
+		var dpr = window.devicePixelRatio || 1;
 
+		var header = document.getElementById('header');
+		var algoControls = document.getElementById('algoControlSection');
+		var generalControls = document.getElementById('generalAnimationControlSection');
+		var footer = document.getElementById('footer');
 
-	widthEntry = addControlToAnimationBar("Text", canvas.width);
-	widthEntry.size = 4;
-	widthEntry.onkeydown = this.returnSubmit(widthEntry, animationManager.changeSize.bind(animationManager), 4, true);
+		var usedHeight = (header ? header.offsetHeight : 0)
+		               + (algoControls ? algoControls.offsetHeight : 0)
+		               + (generalControls ? generalControls.offsetHeight : 0)
+		               + (footer ? footer.offsetHeight : 0);
 
-	
-	tableEntry = document.createElement("td");
-	txtNode = document.createTextNode("       h:"); 
-	tableEntry.appendChild(txtNode);
-	controlBar.appendChild(tableEntry);
-	
-	heightEntry = addControlToAnimationBar("Text", canvas.height);
-	heightEntry.onkeydown = this.returnSubmit(heightEntry, animationManager.changeSize.bind(animationManager), 4, true);
+		var newWidth  = window.innerWidth;
+		var newHeight = window.innerHeight - usedHeight;
 
-	heightEntry.size = 4;
-	sizeButton = addControlToAnimationBar("Button", "Change Canvas Size");
-	
-	sizeButton.onclick = animationManager.changeSize.bind(animationManager) ;
-	
+		if (newWidth  < 100) newWidth  = 100;
+		if (newHeight < 100) newHeight = 100;
 
-        swapButton = addControlToAnimationBar("Button", "Move Controls");
-        swapButton.onclick = swapControlDiv;	
-	
-	
+		// Tamanho físico do canvas em pixels reais (retina / HD)
+		canvas.width  = newWidth  * dpr;
+		canvas.height = newHeight * dpr;
+
+		// Tamanho CSS permanece em pixels lógicos
+		canvas.style.width  = newWidth  + 'px';
+		canvas.style.height = newHeight + 'px';
+
+		// Escala o contexto para que todas as coordenadas continuem em pixels lógicos
+		objectManager.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+		if (widthEntry)  widthEntry.value  = newWidth;
+		if (heightEntry) heightEntry.value = newHeight;
+
+		objectManager.width  = newWidth;
+		objectManager.height = newHeight;
+
+		objectManager.draw();
+		animationManager.fireEvent("CanvasSizeChanged", {width: newWidth, height: newHeight});
+	}
+
+	widthEntry  = null;
+	heightEntry = null;
+
+	fitCanvasToWindow();
+
+	window.addEventListener('resize', fitCanvasToWindow);
+
 	animationManager.addListener("AnimationStarted", this, animStarted);
 	animationManager.addListener("AnimationEnded", this, this.animEnded);
 	animationManager.addListener("AnimationWaiting", this, this.animWaiting);
 	animationManager.addListener("AnimationUndoUnavailable", this, this.anumUndoUnavailable);
-	objectManager.width = canvas.width;
-	objectManager.height = canvas.height;
+	// objectManager.width/height já foram definidos em pixels lógicos por fitCanvasToWindow()
 	return animationManager;
 }
 
@@ -527,28 +520,26 @@ function AnimationManager(objectManager)
 	
 	this.changeSize = function()
 	{
-		
+		if (!widthEntry || !heightEntry) return;
+
 		var width = parseInt(widthEntry.value);
 		var height = parseInt(heightEntry.value);
-		
+
 		if (width > 100)
 		{
 			canvas.width = width;
 			this.animatedObjects.width = width;
-			setCookie("VisualizationWidth", String(width), 30);
-			
 		}
 		if (height > 100)
 		{
 			canvas.height = height;
 			this.animatedObjects.height = height;
-			setCookie("VisualizationHeight", String(height), 30);
 		}
-		width.value = canvas.width;
+		widthEntry.value = canvas.width;
 		heightEntry.value = canvas.height;
-		
+
 		this.animatedObjects.draw();
-		this.fireEvent("CanvasSizeChanged",{width:canvas.width, height:canvas.height});		
+		this.fireEvent("CanvasSizeChanged",{width:canvas.width, height:canvas.height});
 	}
 	
 	this.startNextBlock = function()

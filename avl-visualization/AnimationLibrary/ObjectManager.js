@@ -55,6 +55,7 @@ function ObjectManager()
 	this.height = 0;
 	this.statusReport = new AnimatedLabel(-1, "XXX", false, 30);
 	this.statusReport.x = 30;
+	this.statusReport.font = 'bold 15px "Segoe UI", system-ui, -apple-system, sans-serif';
 	
 	this.draw = function()
 	{
@@ -63,7 +64,7 @@ function ObjectManager()
 			this.framenum = 0;
 		
 		this.ctx.clearRect(0,0,this.width,this.height); // clear canvas
-		this.statusReport.y = this.height - 15;
+		this.statusReport.y = this.height - 22;
 		
 		var i;
 		var j;
